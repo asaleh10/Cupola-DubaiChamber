@@ -47,7 +47,7 @@ Every response field is mapped. Values are never `null`; a JSON `null` becomes `
 | 13 | `IDX_SIEBEL_OPERATION_OBJECT_ID` | siebelOperationObjectId | `Siebel Operation Object Id` | `*` | `*` | `` |
 | 14 | `IDX_PROCESS_INSTANCE_ID` | processInstanceId | `Process Instance Id` | `1-9K4V1BP` | `1-9K4ZJRF` | `1-9K4V1BQ` |
 | 15 | `IDX_RAW_RESPONSE` | rawResponse | whole response body as received | | | |
-| 16 | `IDX_HTTP_STATUS` | httpStatus | HTTP status, `"`" when no answer | | | |
+| 16 | `IDX_HTTP_STATUS` | httpStatus | HTTP status, `""` when no answer | | | |
 | 17 | `IDX_ELAPSED_MS` | elapsedMs | call duration in milliseconds | | | |
 | 18 | `IDX_CALL_ID` | callId | id used in the log lines of this call | | | |
 

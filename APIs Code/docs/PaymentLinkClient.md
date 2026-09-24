@@ -50,7 +50,7 @@ Every response field is mapped. Values are never `null`; a JSON `null` becomes `
 | 12 | `IDX_REDIRECTION_URL` | redirectionUrl | `redirectionurl` | `` |
 | 13 | `IDX_LOGIN_NAME` | loginName | `LoginName` | `TESTUSERSIT` |
 | 14 | `IDX_RAW_RESPONSE` | rawResponse | whole response body as received | |
-| 15 | `IDX_HTTP_STATUS` | httpStatus | HTTP status, `"`" when no answer | |
+| 15 | `IDX_HTTP_STATUS` | httpStatus | HTTP status, `""` when no answer | |
 | 16 | `IDX_ELAPSED_MS` | elapsedMs | call duration in milliseconds | |
 | 17 | `IDX_CALL_ID` | callId | id used in the log lines of this call | |
 

@@ -70,7 +70,7 @@ Every top-level response field is mapped. Values are never `null`; a JSON `null`
 | 17 | `IDX_SR_COUNT` | srCount | size of `SiebelMessage."Service Request"` | `0` | `10` |
 | 18 | `IDX_SR_LIST_JSON` | srListJson | `"Service Request"` as JSON array text | `[]` | `[{...},...]` |
 | 19 | `IDX_RAW_RESPONSE` | rawResponse | whole response body as received | | |
-| 20 | `IDX_HTTP_STATUS` | httpStatus | HTTP status, `"`" when no answer | | |
+| 20 | `IDX_HTTP_STATUS` | httpStatus | HTTP status, `""` when no answer | | |
 | 21 | `IDX_ELAPSED_MS` | elapsedMs | call duration in milliseconds | | |
 | 22 | `IDX_CALL_ID` | callId | id used in the log lines of this call | | |
 

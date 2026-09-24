@@ -60,7 +60,7 @@ Every field the API returns is mapped. Values are never `null`; a JSON `null` be
 | 22 | `IDX_INT_OBJECT_FORMAT` | intObjectFormat | `SiebMsg.IntObjectFormat` | `Siebel Hierarchical` |
 | 23 | `IDX_MESSAGE_TYPE` | messageType | `SiebMsg.MessageType` | `Integration Object` |
 | 24 | `IDX_RAW_RESPONSE` | rawResponse | whole response body as received | `{"Error Code":null,...}` |
-| 25 | `IDX_HTTP_STATUS` | httpStatus | HTTP status, `"`" when no answer | |
+| 25 | `IDX_HTTP_STATUS` | httpStatus | HTTP status, `""` when no answer | |
 | 26 | `IDX_ELAPSED_MS` | elapsedMs | call duration in milliseconds | |
 | 27 | `IDX_CALL_ID` | callId | id used in the log lines of this call | |
 
