@@ -7,7 +7,7 @@ Validates a Dubai Chamber membership (CSN) number and returns the member's name,
 | Class | `flow.ValidateMembershipClient` |
 | Endpoint | `POST https://apisit.dubaichamber.com/dcci/DCCICPIntegration/ValidateAccount_REST/ValidateAccount` |
 | Process name | `DC Validate Member Info WF` |
-| Headers | `api-key` only |
+| Headers | `api-key` only (masked in the log by default) |
 | Side effects | None (read-only) |
 
 ## Methods
@@ -25,7 +25,7 @@ public static String[] validateMember(String memberNo)
 `LicenseNo`, `LicenseAuth` and `LicenseType` are sent as `""` from constants inside the class (`LICENSE_NO`,
 `LICENSE_AUTH`, `LICENSE_TYPE`). Empty `memberNo` returns `FAILED` / `INVALID_INPUT` without calling the API.
 
-## Output – `String[16]`
+## Output – `String[19]`
 
 Every response field is mapped. Values are never `null`; a JSON `null` becomes `""`.
 
@@ -47,6 +47,9 @@ Every response field is mapped. Values are never `null`; a JSON `null` becomes `
 | 13 | `IDX_SIEBEL_OPERATION_OBJECT_ID` | siebelOperationObjectId | `Siebel Operation Object Id` | `*` | `*` | `` |
 | 14 | `IDX_PROCESS_INSTANCE_ID` | processInstanceId | `Process Instance Id` | `1-9K4V1BP` | `1-9K4ZJRF` | `1-9K4V1BQ` |
 | 15 | `IDX_RAW_RESPONSE` | rawResponse | whole response body as received | | | |
+| 16 | `IDX_HTTP_STATUS` | httpStatus | HTTP status, `"`" when no answer | | | |
+| 17 | `IDX_ELAPSED_MS` | elapsedMs | call duration in milliseconds | | | |
+| 18 | `IDX_CALL_ID` | callId | id used in the log lines of this call | | | |
 
 `memberStatus` is returned exactly as the API sends it. Values seen so far in SIT: `Active`, `Hold`,
 `Active - Renew`, `Active - Amend`, `In Progress`, `Cancelled`. The call flow decides what each one means.
@@ -56,10 +59,14 @@ success indicator, not `message`.
 
 Call status values:
 
-- `SUCCESS` – member found, `Error Code` was `0`.
+- `SUCCESS` – API answered without an error code.
 - `FAILED` / code `1` – `Invalid Member/License No`. The number does not exist.
-- `FAILED` / `INVALID_INPUT` – memberNo empty.
-- `ERROR` – network / HTTP problem.
+- `FAILED` / `INVALID_INPUT` – input empty, API not called.
+- `ERROR` / `INVALID_CONFIG`, `AUTH_ERROR`, `HTTP_ERROR`, `INVALID_RESPONSE`, `TIMEOUT`, `CONNECTION_ERROR`, `SSL_ERROR`, `ERROR` – technical problem, see [README – Codes to branch on](README.md#codes-to-branch-on).
+
+## Configuration and logging
+
+URL: property `dc.validate.url` or `setApiUrl()`. Key, timeouts, trust-all SSL and logging are the shared `dc.api.*` properties / setters, see [README – Configuration](README.md#configuration). Every call writes to `<logDir>/ValidateMembershipClient/ValidateMembershipClient_yyyy-MM-dd.log` with the call id returned in `IDX_CALL_ID`.
 
 ## Usage in an OD servlet block
 
@@ -90,7 +97,7 @@ build.cmd
 java "-Dfile.encoding=UTF-8" -cp "out;lib\json-20240303.jar" flow.ValidateMembershipClient 1298
 ```
 
-Usage: `flow.ValidateMembershipClient <memberNo>`
+Usage: `flow.ValidateMembershipClient <memberNo> [--trustall] [--url URL] [--apikey KEY] [--logdir DIR]`
 
 Expected output (SIT, 21 Sep 2026):
 

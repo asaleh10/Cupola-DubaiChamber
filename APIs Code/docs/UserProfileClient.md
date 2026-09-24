@@ -8,7 +8,7 @@ Looks up a registered Dubai Chamber user by mobile number and returns the user's
 | Class | `flow.UserProfileClient` |
 | Endpoint | `POST https://apisit.dubaichamber.com/dcci/DCCICPIntegration/GenericGetUserProfileAPI` |
 | Process name | `DC Get User Profile Details Generic WF` |
-| Headers | `api-key` only |
+| Headers | `api-key` only (masked in the log by default) |
 | Side effects | None (read-only) |
 
 ## Methods
@@ -29,7 +29,7 @@ public static String[] getAccount(String accountsJson, int index)
 `EmiratesId`, `EmailAddr` and `LoginName` are sent as `""` from constants inside the class (`EMIRATES_ID`,
 `EMAIL_ADDR`, `LOGIN_NAME`). Empty `mobileNumber` returns `FAILED` / `INVALID_INPUT` without calling the API.
 
-## Output – `String[25]`
+## Output – `String[28]`
 
 Every field the API returns is mapped. Values are never `null`; a JSON `null` becomes `""`.
 
@@ -60,6 +60,9 @@ Every field the API returns is mapped. Values are never `null`; a JSON `null` be
 | 22 | `IDX_INT_OBJECT_FORMAT` | intObjectFormat | `SiebMsg.IntObjectFormat` | `Siebel Hierarchical` |
 | 23 | `IDX_MESSAGE_TYPE` | messageType | `SiebMsg.MessageType` | `Integration Object` |
 | 24 | `IDX_RAW_RESPONSE` | rawResponse | whole response body as received | `{"Error Code":null,...}` |
+| 25 | `IDX_HTTP_STATUS` | httpStatus | HTTP status, `"`" when no answer | |
+| 26 | `IDX_ELAPSED_MS` | elapsedMs | call duration in milliseconds | |
+| 27 | `IDX_CALL_ID` | callId | id used in the log lines of this call | |
 
 ### Account record – `getAccount(accountsJson, index)` returns `String[14]`
 
@@ -84,11 +87,15 @@ An out-of-range index returns an array of empty strings (never `null`).
 
 Call status values:
 
-- `SUCCESS` – user found. `accountCount` may be `0`.
-- `FAILED` / code `1` – message `User details not found for the given input.`
-- `FAILED` / `INVALID_INPUT` – mobileNumber empty.
-- `FAILED` / `NOT_FOUND` – API answered without an error code but without a `User` block.
-- `ERROR` – network / HTTP problem.
+- `SUCCESS` – API answered without an error code.
+- `FAILED` / code `1` – `User details not found for the given input.`
+- `FAILED` / `NOT_FOUND` – HTTP 200 without error code but without a `User` block.
+- `FAILED` / `INVALID_INPUT` – input empty, API not called.
+- `ERROR` / `INVALID_CONFIG`, `AUTH_ERROR`, `HTTP_ERROR`, `INVALID_RESPONSE`, `TIMEOUT`, `CONNECTION_ERROR`, `SSL_ERROR`, `ERROR` – technical problem, see [README – Codes to branch on](README.md#codes-to-branch-on).
+
+## Configuration and logging
+
+URL: property `dc.userprofile.url` or `setApiUrl()`. Key, timeouts, trust-all SSL and logging are the shared `dc.api.*` properties / setters, see [README – Configuration](README.md#configuration). Every call writes to `<logDir>/UserProfileClient/UserProfileClient_yyyy-MM-dd.log` with the call id returned in `IDX_CALL_ID`.
 
 ## Usage in an OD servlet block
 
@@ -135,7 +142,7 @@ build.cmd
 java "-Dfile.encoding=UTF-8" -cp "out;lib\json-20240303.jar" flow.UserProfileClient 97121234234
 ```
 
-Usage: `flow.UserProfileClient <mobileNumber>`
+Usage: `flow.UserProfileClient <mobileNumber> [--trustall] [--url URL] [--apikey KEY] [--logdir DIR]`
 
 The CLI prints the user result table followed by one `Account[n]` table per linked account.
 

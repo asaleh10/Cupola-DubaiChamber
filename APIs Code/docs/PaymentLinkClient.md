@@ -8,7 +8,7 @@ the login user.
 | Class | `flow.PaymentLinkClient` |
 | Endpoint | `POST https://apisit.dubaichamber.com/dcci/DCCICPIntegration/GenSendPaymentLink_REST/GenSendPaymentLink` |
 | Process name | `DC Generate Send ePay URL WF` |
-| Headers | `api-key` only |
+| Headers | `api-key` only (masked in the log by default) |
 | Side effects | **Yes.** Each successful call creates a payment transaction and sends an e-mail. Do not call it in a loop or for testing without a test SR. |
 
 ## Methods
@@ -29,7 +29,7 @@ public static String formatSrNumber(String srNumber)
 `LoginName` (`TESTUSERSIT`) and `PaymentType` (`DubaiPay`) are constants inside the class, `LOGIN_NAME` and
 `PAYMENT_TYPE`. Empty `srNumber` returns `FAILED` / `INVALID_INPUT` without calling the API.
 
-## Output – `String[15]`
+## Output – `String[18]`
 
 Every response field is mapped. Values are never `null`; a JSON `null` becomes `""`.
 
@@ -50,13 +50,20 @@ Every response field is mapped. Values are never `null`; a JSON `null` becomes `
 | 12 | `IDX_REDIRECTION_URL` | redirectionUrl | `redirectionurl` | `` |
 | 13 | `IDX_LOGIN_NAME` | loginName | `LoginName` | `TESTUSERSIT` |
 | 14 | `IDX_RAW_RESPONSE` | rawResponse | whole response body as received | |
+| 15 | `IDX_HTTP_STATUS` | httpStatus | HTTP status, `"`" when no answer | |
+| 16 | `IDX_ELAPSED_MS` | elapsedMs | call duration in milliseconds | |
+| 17 | `IDX_CALL_ID` | callId | id used in the log lines of this call | |
 
 Call status values:
 
-- `SUCCESS` – link generated. `emailStatus` and `paymentUrl` are returned as-is for the call flow to use.
+- `SUCCESS` – API answered without an error code.
 - `FAILED` / API error code – see `message`.
-- `FAILED` / `INVALID_INPUT` – srNumber empty.
-- `ERROR` – network / HTTP problem.
+- `FAILED` / `INVALID_INPUT` – input empty, API not called.
+- `ERROR` / `INVALID_CONFIG`, `AUTH_ERROR`, `HTTP_ERROR`, `INVALID_RESPONSE`, `TIMEOUT`, `CONNECTION_ERROR`, `SSL_ERROR`, `ERROR` – technical problem, see [README – Codes to branch on](README.md#codes-to-branch-on).
+
+## Configuration and logging
+
+URL: property `dc.payment.url` or `setApiUrl()`. Key, timeouts, trust-all SSL and logging are the shared `dc.api.*` properties / setters, see [README – Configuration](README.md#configuration). Every call writes to `<logDir>/PaymentLinkClient/PaymentLinkClient_yyyy-MM-dd.log` with the call id returned in `IDX_CALL_ID`.
 
 ## Usage in an OD servlet block
 
@@ -88,7 +95,7 @@ build.cmd
 java -cp "out;lib\json-20240303.jar" flow.PaymentLinkClient 120804978308
 ```
 
-Usage: `flow.PaymentLinkClient <srNumberDigits>`
+Usage: `flow.PaymentLinkClient <srNumberDigits> [--trustall] [--url URL] [--apikey KEY] [--logdir DIR]`
 
 Expected output, based on the response captured in Postman on 21 Sep 2026:
 

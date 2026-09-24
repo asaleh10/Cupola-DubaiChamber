@@ -10,7 +10,7 @@ Two lookups on the same endpoint:
 | Class | `flow.ServiceRequestStatusClient` |
 | Endpoint | `POST https://apisit.dubaichamber.com/dcci/DCCICPIntegration/SRSummary_REST/GetSRSummary` |
 | Process name | `DC Get SR Summary Mob App WF` |
-| Headers | `api-key` only |
+| Headers | `api-key` only (masked in the log by default) |
 | Side effects | None (read-only) |
 
 ## Methods
@@ -44,7 +44,7 @@ public static String formatSrNumber(String srNumber)
 
 Empty `srNumber` or `csn` returns `FAILED` / `INVALID_INPUT` without calling the API.
 
-## Output – `String[20]`
+## Output – `String[23]`
 
 Every top-level response field is mapped. Values are never `null`; a JSON `null` becomes `""`.
 
@@ -70,6 +70,9 @@ Every top-level response field is mapped. Values are never `null`; a JSON `null`
 | 17 | `IDX_SR_COUNT` | srCount | size of `SiebelMessage."Service Request"` | `0` | `10` |
 | 18 | `IDX_SR_LIST_JSON` | srListJson | `"Service Request"` as JSON array text | `[]` | `[{...},...]` |
 | 19 | `IDX_RAW_RESPONSE` | rawResponse | whole response body as received | | |
+| 20 | `IDX_HTTP_STATUS` | httpStatus | HTTP status, `"`" when no answer | | |
+| 21 | `IDX_ELAPSED_MS` | elapsedMs | call duration in milliseconds | | |
+| 22 | `IDX_CALL_ID` | callId | id used in the log lines of this call | | |
 
 By SR number the answer is in `srStatus`; the list is empty. By CSN the answer is the list; `srStatus` is empty.
 
@@ -105,8 +108,12 @@ Call status values:
 - `SUCCESS` – API answered without an error code.
 - `FAILED` / Siebel code such as `(SBL-BPR-00162)--(SBL-CMI-00122)` – SR number does not exist.
 - `FAILED` / `NOT_FOUND` – by-SR call answered without error code but with no status.
-- `FAILED` / `INVALID_INPUT` – srNumber or csn empty.
-- `ERROR` – network / HTTP problem.
+- `FAILED` / `INVALID_INPUT` – input empty, API not called.
+- `ERROR` / `INVALID_CONFIG`, `AUTH_ERROR`, `HTTP_ERROR`, `INVALID_RESPONSE`, `TIMEOUT`, `CONNECTION_ERROR`, `SSL_ERROR`, `ERROR` – technical problem, see [README – Codes to branch on](README.md#codes-to-branch-on).
+
+## Configuration and logging
+
+URL: property `dc.srstatus.url` or `setApiUrl()`. Key, timeouts, trust-all SSL and logging are the shared `dc.api.*` properties / setters, see [README – Configuration](README.md#configuration). Every call writes to `<logDir>/ServiceRequestStatusClient/ServiceRequestStatusClient_yyyy-MM-dd.log` with the call id returned in `IDX_CALL_ID`.
 
 ## Usage in an OD servlet block
 
@@ -166,7 +173,7 @@ java "-Dfile.encoding=UTF-8" -cp "out;lib\json-20240303.jar" flow.ServiceRequest
 java "-Dfile.encoding=UTF-8" -cp "out;lib\json-20240303.jar" flow.ServiceRequestStatusClient csn 1298 5 10
 ```
 
-Usage: `sr <srNumberDigits>` or `csn <csn> [pageSize] [startRowNum]`
+Usage: `sr <srNumberDigits>` or `csn <csn> [pageSize] [startRowNum]`, each followed by optional `[--trustall] [--url URL] [--apikey KEY] [--logdir DIR]`
 
 Expected output by SR (SIT, 21 Sep 2026):
 
