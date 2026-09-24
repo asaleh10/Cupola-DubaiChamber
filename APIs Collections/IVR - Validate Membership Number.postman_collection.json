@@ -1,0 +1,154 @@
+{
+  "info": {
+    "_postman_id": "886616b3-d101-4497-b788-b2eb8fcb1631",
+    "name": "IVR - Validate Membership Number",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "8320666"
+  },
+  "item": [
+    {
+      "name": "ValdiateAccount",
+      "request": {
+        "auth": {
+          "type": "apikey",
+          "apikey": [
+            {
+              "key": "value",
+              "value": "_5oGKrI3be5GtHMn4WjALPsEvzjpn3T-4nGwSvrNcCE",
+              "type": "string"
+            },
+            {
+              "key": "key",
+              "value": "api-key",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "access_token",
+            "value": "Basic RUFJVVNFUjpFQUlTYSMxNCMjMTI="
+          },
+          {
+            "key": "SSO_SIEBEL_USER",
+            "value": "PRAKASHPOOJARY"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n\"body\": {\r\n\"ProcessName\":\"DC Validate Member Info WF\",\r\n\"LicenseNo\":\"\",\r\n\"LicenseAuth\":\"\",\r\n\"MemberNo\":\"1298\",\r\n\"LicenseType\":\"\"\r\n}\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://apisit.dubaichamber.com/dcci/DCCICPIntegration/ValidateAccount_REST/ValidateAccount",
+          "protocol": "https",
+          "host": [
+            "apisit",
+            "dubaichamber",
+            "com"
+          ],
+          "path": [
+            "dcci",
+            "DCCICPIntegration",
+            "ValidateAccount_REST",
+            "ValidateAccount"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "ValdiateAccount",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "access_token",
+                "value": "Basic RUFJVVNFUjpFQUlTYSMxNCMjMTI="
+              },
+              {
+                "key": "SSO_SIEBEL_USER",
+                "value": "PRAKASHPOOJARY"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\"body\": {\r\n\"ProcessName\":\"DC Validate Member Info WF\",\r\n\"LicenseNo\":\"\",\r\n\"LicenseAuth\":\"\",\r\n\"MemberNo\":\"1298\",\r\n\"LicenseType\":\"\"\r\n}\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://apisit.dubaichamber.com/dcci/DCCICPIntegration/ValidateAccount_REST/ValidateAccount",
+              "protocol": "https",
+              "host": [
+                "apisit",
+                "dubaichamber",
+                "com"
+              ],
+              "path": [
+                "dcci",
+                "DCCICPIntegration",
+                "ValidateAccount_REST",
+                "ValidateAccount"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "Date",
+              "value": "Thu, 17 Sep 2026 08:19:41 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json;charset=utf-8"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Strict-Transport-Security",
+              "value": "max-age=31536000"
+            },
+            {
+              "key": "X-Frame-Options",
+              "value": "sameorigin"
+            },
+            {
+              "key": "X-Content-Type-Options",
+              "value": "nosniff"
+            },
+            {
+              "key": "X-XSS-Protection",
+              "value": "1; mode=block"
+            },
+            {
+              "key": "opc-request-id",
+              "value": "/82F007107A6545349D6A5898E6D1F3D0/BC562A0284694D89929CCDCA9667FF9E"
+            },
+            {
+              "key": "X-Request-Id",
+              "value": "12e3725b06b9d19d5a920aaa99297afd"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"Error Code\": 0,\n    \"LicenseNo\": \"1000011111\",\n    \"ExpiryDate\": \"2029-09-30\",\n    \"LicenseType\": \"Commercial License\",\n    \"MemberNo\": \"1298\",\n    \"Siebel Operation Object Id\": \"*\",\n    \"Process Instance Id\": \"1-9K380PX\",\n    \"MemberName\": \"DUBAI CHAMBER COMMERCE\",\n    \"Object Id\": \"1-29L-3967\",\n    \"Error Message\": \"2010-07-10\",\n    \"Status\": \"Active\",\n    \"LicenseAuth\": \"Jebel Ali Free Zone Authority\",\n    \"PlatinumFlag\": \"Y\",\n    \"MemberNameAra\": \"غرفة تجارة دبي\"\n}"
+        }
+      ]
+    }
+  ]
+}

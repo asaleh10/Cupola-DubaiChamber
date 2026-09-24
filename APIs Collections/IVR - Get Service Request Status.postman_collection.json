@@ -1,0 +1,136 @@
+{
+  "info": {
+    "_postman_id": "1be0a7df-d8c3-4486-8590-31ff7f31adc6",
+    "name": "IVR - Get Service Request Status",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "8320666"
+  },
+  "item": [
+    {
+      "name": "Get SR Status",
+      "request": {
+        "auth": {
+          "type": "apikey",
+          "apikey": [
+            {
+              "key": "value",
+              "value": "_5oGKrI3be5GtHMn4WjALPsEvzjpn3T-4nGwSvrNcCE",
+              "type": "string"
+            },
+            {
+              "key": "key",
+              "value": "api-key",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"body\": {\r\n        \"ProcessName\": \"DC Get SR Summary Mob App WF\",\r\n        \"IncomingHierarchy\": {\r\n            \"MessageId\": \"26091010140300\",\r\n            \"IntObjectName\": \"DCGetSRSummaryIO\",\r\n            \"MessageType\": \"Integration Object\",\r\n            \"IntObjectFormat\": \"Siebel Hierarchical\",\r\n            \"ListOfDCGetSRSummaryIO\": {\r\n                \"Service Request\": {\r\n                    \"Account Id\": \"\",\r\n                    \"CSN\": \"1298\",\r\n                    \"SR Number\": \"1-20802411138\",\r\n                    \"SR Type\": \"\",\r\n                    \"SR Sub Type\": \"\",\r\n                    \"Status\": \"\",\r\n                    \"Created By Name\": \"\"\r\n                }\r\n            }\r\n        },\r\n        \"Language\": \"ENU\",\r\n        \"PageSize\": 10,\r\n        \"StartRowNum\": 0,\r\n        \"NewQuery\": true,\r\n        \"NoDays\": \"15\"\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://apisit.dubaichamber.com/dcci/DCCICPIntegration/SRSummary_REST/GetSRSummary",
+          "protocol": "https",
+          "host": [
+            "apisit",
+            "dubaichamber",
+            "com"
+          ],
+          "path": [
+            "dcci",
+            "DCCICPIntegration",
+            "SRSummary_REST",
+            "GetSRSummary"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "Get SR Status",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"body\": {\r\n        \"ProcessName\": \"DC Get SR Summary Mob App WF\",\r\n        \"IncomingHierarchy\": {\r\n            \"MessageId\": \"26091010140300\",\r\n            \"IntObjectName\": \"DCGetSRSummaryIO\",\r\n            \"MessageType\": \"Integration Object\",\r\n            \"IntObjectFormat\": \"Siebel Hierarchical\",\r\n            \"ListOfDCGetSRSummaryIO\": {\r\n                \"Service Request\": {\r\n                    \"Account Id\": \"\",\r\n                    \"CSN\": \"1298\",\r\n                    \"SR Number\": \"1-20802411138\",\r\n                    \"SR Type\": \"\",\r\n                    \"SR Sub Type\": \"\",\r\n                    \"Status\": \"\",\r\n                    \"Created By Name\": \"\"\r\n                }\r\n            }\r\n        },\r\n        \"Language\": \"ENU\",\r\n        \"PageSize\": 10,\r\n        \"StartRowNum\": 0,\r\n        \"NewQuery\": true,\r\n        \"NoDays\": \"15\"\r\n    }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://apisit.dubaichamber.com/dcci/DCCICPIntegration/SRSummary_REST/GetSRSummary",
+              "protocol": "https",
+              "host": [
+                "apisit",
+                "dubaichamber",
+                "com"
+              ],
+              "path": [
+                "dcci",
+                "DCCICPIntegration",
+                "SRSummary_REST",
+                "GetSRSummary"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "Date",
+              "value": "Thu, 10 Sep 2026 06:36:47 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json;charset=utf-8"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Strict-Transport-Security",
+              "value": "max-age=31536000"
+            },
+            {
+              "key": "X-Frame-Options",
+              "value": "sameorigin"
+            },
+            {
+              "key": "X-Content-Type-Options",
+              "value": "nosniff"
+            },
+            {
+              "key": "X-XSS-Protection",
+              "value": "1; mode=block"
+            },
+            {
+              "key": "opc-request-id",
+              "value": "/51A21473A8EF428FAE00BD1431720CD7/AE13F86517EA4CCC8F3A6C8737984F23"
+            },
+            {
+              "key": "X-Request-Id",
+              "value": "2d3eee0e11cf54135697f3d4aa39dbc8"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"Error Code\": null,\n    \"Language\": \"English\",\n    \"StartRowNum\": 0,\n    \"TotalRecords\": null,\n    \"PageSize\": 10,\n    \"Error Message\": null,\n    \"NoDays\": 15,\n    \"Status\": \"Approved and Payment Awaited\",\n    \"AppId\": null,\n    \"NewQuery\": \"true\",\n    \"SRNum\": \"1-20802411138\",\n    \"COODteRange\": \"08/26/2026 00:00:00\",\n    \"SiebelMessage\": {\n        \"IntObjectFormat\": \"Siebel Hierarchical\",\n        \"MessageId\": \"1-3W27R6\",\n        \"IntObjectName\": \"DCGetSRSummaryIO\",\n        \"MessageType\": \"Integration Object\",\n        \"Service Request\": [\n            {\n                \"DC SR Id\": \"1-9K17V5U\",\n                \"SR Sub Type\": \"Substitute Carnet\",\n                \"DC Current Month SR\": \"Y\",\n                \"DC License Registration Num Member Level\": \"1000011111\",\n                \"DC eReceipt Download URL\": \"Document Generation InProgress\",\n                \"DC Receipt Amount\": \"900\",\n                \"SR Number\": \"1-20802411138\",\n                \"DC Invoice Number\": null,\n                \"DC Invoice Date\": null,\n                \"DC Member Name (English)\": \"DUBAI CHAMBER COMMERCE\",\n                \"DC Invoice Amount\": null,\n                \"Status\": \"Approved and Payment Awaited\",\n                \"CSN\": \"1298\",\n                \"DC Respondant Name\": null,\n                \"SR Type\": \"ATA Carnet\",\n                \"DC Created\": \"09/10/2026 10:00:42\",\n                \"DC COO Number\": null,\n                \"Description\": null,\n                \"DCDownloadURL\": \"Available after Payment\"\n            }\n        ]\n    }\n}"
+        }
+      ]
+    }
+  ]
+}

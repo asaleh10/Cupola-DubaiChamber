@@ -1,0 +1,154 @@
+{
+  "info": {
+    "_postman_id": "871c1f7e-b5ba-4ad3-8531-63f13cd86341",
+    "name": "IVR - Generate and Send Payment Link API AG",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "8320666"
+  },
+  "item": [
+    {
+      "name": "GenSendPay",
+      "request": {
+        "auth": {
+          "type": "apikey",
+          "apikey": [
+            {
+              "key": "value",
+              "value": "_5oGKrI3be5GtHMn4WjALPsEvzjpn3T-4nGwSvrNcCE",
+              "type": "string"
+            },
+            {
+              "key": "key",
+              "value": "api-key",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "access_token",
+            "value": "Basic RUFJVVNFUjpFQUlTYSMxNCMjMTI="
+          },
+          {
+            "key": "SSO_SIEBEL_USER",
+            "value": "PRAKASHPOOJARY"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n\t\"body\": \r\n    {\r\n\t\"ProcessName\":\"DC Generate Send ePay URL WF\",\r\n\t\"SR Number\" : \"1-20804978308\",\r\n\t\"LoginName\" : \"TESTUSERSIT\",\r\n    \"PaymentType\" : \"DubaiPay\"\r\n\t}\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://apisit.dubaichamber.com/dcci/DCCICPIntegration/GenSendPaymentLink_REST/GenSendPaymentLink",
+          "protocol": "https",
+          "host": [
+            "apisit",
+            "dubaichamber",
+            "com"
+          ],
+          "path": [
+            "dcci",
+            "DCCICPIntegration",
+            "GenSendPaymentLink_REST",
+            "GenSendPaymentLink"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "GenSendPay",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "access_token",
+                "value": "Basic RUFJVVNFUjpFQUlTYSMxNCMjMTI="
+              },
+              {
+                "key": "SSO_SIEBEL_USER",
+                "value": "PRAKASHPOOJARY"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\t\"body\": \r\n    {\r\n\t\"ProcessName\":\"DC Generate Send ePay URL WF\",\r\n\t\"SR Number\" : \"1-20804978308\",\r\n\t\"LoginName\" : \"TESTUSERSIT\",\r\n    \"PaymentType\" : \"DubaiPay\"\r\n\t}\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://apisit.dubaichamber.com/dcci/DCCICPIntegration/GenSendPaymentLink_REST/GenSendPaymentLink",
+              "protocol": "https",
+              "host": [
+                "apisit",
+                "dubaichamber",
+                "com"
+              ],
+              "path": [
+                "dcci",
+                "DCCICPIntegration",
+                "GenSendPaymentLink_REST",
+                "GenSendPaymentLink"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "Date",
+              "value": "Thu, 17 Sep 2026 07:23:55 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json;charset=utf-8"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Strict-Transport-Security",
+              "value": "max-age=31536000"
+            },
+            {
+              "key": "X-Frame-Options",
+              "value": "sameorigin"
+            },
+            {
+              "key": "X-Content-Type-Options",
+              "value": "nosniff"
+            },
+            {
+              "key": "X-XSS-Protection",
+              "value": "1; mode=block"
+            },
+            {
+              "key": "opc-request-id",
+              "value": "/DC67B2DB5989497EAB7085A168A0D14E/C6D44DAB8F2D42F8BC97DC5F8AD48533"
+            },
+            {
+              "key": "X-Request-Id",
+              "value": "8957ac59ceba27e8e3910c8abc91ea67"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"Error Code\": null,\n    \"SR Number\": \"1-20804978308\",\n    \"Final Amount\": \"0\",\n    \"PaymentType\": \"DubaiPay\",\n    \"SRType\": \"Payment Services\",\n    \"Error Message\": null,\n    \"redirectionurl\": null,\n    \"EmailAddr\": \"puneet.shet@dubaichamber.com\",\n    \"Transaction Id\": \"334391801\",\n    \"SendEmailTo\": null,\n    \"EmailStatus\": \"Successfully sent the email\",\n    \"PaymentURL\": \"https://epayment.qa.dubai.ae/ePayHub/Authentication/SPServlet?token=5039ABC84F4D4CD89B0762A0F166FE0138FDA76BDF039AA984EBC22736180E943B3B98F5D649A02F59CDC638F9CAD0E1AB33586AD594229AF1E384EE4DFE2C154B0618FD83042A90B703BD23C868074237C2888A6965F4F828507075C860F96AF95C64B28FBA58709D7ABB6E6F4916D9C221E0A6B413C53F38E94096E5425200A086635D5901DCCE\",\n    \"LoginName\": \"TESTUSERSIT\"\n}"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "info": {
+    "_postman_id": "d85e0eb3-7921-4371-8c71-f6aaed7d9125",
+    "name": "IVR - GenericGetUserProfileAPI",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "8320666"
+  },
+  "item": [
+    {
+      "name": "GenericGetUserProfileAPI - Guest call",
+      "request": {
+        "auth": {
+          "type": "apikey",
+          "apikey": [
+            {
+              "key": "value",
+              "value": "_5oGKrI3be5GtHMn4WjALPsEvzjpn3T-4nGwSvrNcCE",
+              "type": "string"
+            },
+            {
+              "key": "key",
+              "value": "api-key",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"body\": \r\n    {\r\n        \"ProcessName\": \"DC Get User Profile Details Generic WF\",\r\n        \"EmiratesId\": \"\",//\"78419887513792\",\r\n        \"EmailAddr\": \"\",\r\n        \"MobileNumber\":\"971506584588\",\r\n        \"LoginName\": \"\"\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://apisit.dubaichamber.com/dcci/DCCICPIntegration/GenericGetUserProfileAPI",
+          "protocol": "https",
+          "host": [
+            "apisit",
+            "dubaichamber",
+            "com"
+          ],
+          "path": [
+            "dcci",
+            "DCCICPIntegration",
+            "GenericGetUserProfileAPI"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "GenericGetUserProfileAPI - Guest call",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"body\": \r\n    {\r\n        \"ProcessName\": \"DC Get User Profile Details Generic WF\",\r\n        \"EmiratesId\": \"\",//\"78419887513792\",\r\n        \"EmailAddr\": \"\",//\"ppprakash13@gmail.com\",\r\n        \"MobileNumber\":\"\",\r\n        \"LoginName\": \"TESTUSERSIT\"\r\n    }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://apisit.dubaichamber.com/dcci/DCCICPIntegration/GenericGetUserProfileAPI",
+              "protocol": "https",
+              "host": [
+                "apisit",
+                "dubaichamber",
+                "com"
+              ],
+              "path": [
+                "dcci",
+                "DCCICPIntegration",
+                "GenericGetUserProfileAPI"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "Date",
+              "value": "Mon, 07 Sep 2026 11:25:08 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json;charset=utf-8"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Strict-Transport-Security",
+              "value": "max-age=31536000"
+            },
+            {
+              "key": "X-Frame-Options",
+              "value": "sameorigin"
+            },
+            {
+              "key": "X-Content-Type-Options",
+              "value": "nosniff"
+            },
+            {
+              "key": "X-XSS-Protection",
+              "value": "1; mode=block"
+            },
+            {
+              "key": "opc-request-id",
+              "value": "/21A60EB7C4904DCAABCB6003A1BBF3D0/6DD6FF66480945EDB1EA29520CCF1844"
+            },
+            {
+              "key": "X-Request-Id",
+              "value": "caead6355d774d80eed0da67a212182c"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"Error Code\": null,\n    \"Error Message\": null,\n    \"SiebMsg\": {\n        \"IntObjectFormat\": \"Siebel Hierarchical\",\n        \"MessageId\": \"1-3W1XZV\",\n        \"IntObjectName\": \"DCGetUserAccntRESTIO\",\n        \"MessageType\": \"Integration Object\",\n        \"User\": {\n            \"UserType\": \"Web Registered User\",\n            \"Nationality\": \"United Arab Emirates\",\n            \"DateofBirth\": null,\n            \"EMailAddr\": \"puneet.shet@dubaichamber.com\",\n            \"RegistrationSourceAppName\": null,\n            \"Phone\": 971506584588,\n            \"EmiratesID\": 78419887513792,\n            \"JobTitle\": null,\n            \"HomePhone\": null,\n            \"LastName\": \"Gowda\",\n            \"FirstName\": \"Chandan\",\n            \"UserStatus\": \"Active\",\n            \"LoginName\": \"TESTUSERSIT\",\n            \"Account\": [\n                {\n                    \"DCNameArabic\": \"شركة مشاريع الغرير (ذ.م.م)\",\n                    \"DCNameEnglish\": \"AL GHURAIR ENTERPRISES CO. (L.L.C)\",\n                    \"DCExpiryDate\": \"01/21/2030\",\n                    \"CSN\": \"295\",\n                    \"AccountTypeCode\": \"Member\",\n                    \"AccountStatus\": \"Active\",\n                    \"MainPhoneNumber\": \"4-3321313\",\n                    \"MainFaxNumber\": \"4-3322789\"\n                },\n                {\n                    \"DCNameArabic\": \"سي . جي . آر . م م ح\",\n                    \"DCNameEnglish\": \"C.G.R.FZE\",\n                    \"DCExpiryDate\": \"09/30/2028\",\n                    \"CSN\": \"177495\",\n                    \"AccountTypeCode\": \"Member\",\n                    \"AccountStatus\": \"Active\",\n                    \"MainPhoneNumber\": \"4-8128300\",\n                    \"MainFaxNumber\": null\n                },\n                {\n                    \"DCNameArabic\": \"Chandan Gowda\",\n                    \"DCNameEnglish\": \"Chandan Gowda\",\n                    \"DCExpiryDate\": \"06/26/2027\",\n                    \"CSN\": \"545978\",\n                    \"AccountTypeCode\": \"Member\",\n                    \"AccountStatus\": \"Active\",\n                    \"MainPhoneNumber\": null,\n                    \"MainFaxNumber\": null\n                },\n                {\n                    \"DCNameArabic\": \"دي اتش ال لوجستيكس ذ.م.م\",\n                    \"DCNameEnglish\": \"DHL TEST LOGISTICS L.L.C\",\n                    \"DCExpiryDate\": \"09/05/2026\",\n                    \"CSN\": \"17314\",\n                    \"AccountTypeCode\": \"Member\",\n                    \"AccountStatus\": \"Active\",\n                    \"MainPhoneNumber\": \"971556536656\",\n                    \"MainFaxNumber\": \"+971-4-2824901\"\n                },\n                {\n                    \"DCNameArabic\": \"غرفة تجارة دبي\",\n                    \"DCNameEnglish\": \"DUBAI CHAMBER COMMERCE\",\n                    \"DCExpiryDate\": \"09/30/2029\",\n                    \"CSN\": \"1298\",\n                    \"AccountTypeCode\": \"Member\",\n                    \"AccountStatus\": \"Active\",\n                    \"MainPhoneNumber\": \"971501234567\",\n                    \"MainFaxNumber\": \"+97142260123\"\n                },\n                {\n                    \"DCNameArabic\": \"انتربرنور\",\n                    \"DCNameEnglish\": \"Entrep Test\",\n                    \"DCExpiryDate\": \"05/02/2032\",\n                    \"CSN\": \"547451\",\n                    \"AccountTypeCode\": \"Member\",\n                    \"AccountStatus\": \"Active\",\n                    \"MainPhoneNumber\": \"971512344565\",\n                    \"MainFaxNumber\": null\n                },\n                {\n                    \"DCNameArabic\": \"عضوية رواد الأعمال\",\n                    \"DCNameEnglish\": \"Entrepreneurs Membership\",\n                    \"DCExpiryDate\": \"04/15/2027\",\n                    \"CSN\": \"544997\",\n                    \"AccountTypeCode\": \"Member\",\n                    \"AccountStatus\": \"Active\",\n                    \"MainPhoneNumber\": \"919876543210\",\n                    \"MainFaxNumber\": null\n                },\n                {\n                    \"DCNameArabic\": \"جواد رقوبي\",\n                    \"DCNameEnglish\": \"Jawed ragoubi\",\n                    \"DCExpiryDate\": \"08/26/2035\",\n                    \"CSN\": \"547313\",\n                    \"AccountTypeCode\": \"Member\",\n                    \"AccountStatus\": \"Active\",\n                    \"MainPhoneNumber\": \"5089652535\",\n                    \"MainFaxNumber\": null\n                },\n                {\n                    \"DCNameArabic\": \"خولة ميلاد تست\",\n                    \"DCNameEnglish\": \"Miled khaoula test\",\n                    \"DCExpiryDate\": \"08/26/2030\",\n                    \"CSN\": \"547312\",\n                    \"AccountTypeCode\": \"Member\",\n                    \"AccountStatus\": \"Active\",\n                    \"MainPhoneNumber\": \"508965832\",\n                    \"MainFaxNumber\": null\n                },\n                {\n                    \"DCNameArabic\": \"Sean\",\n                    \"DCNameEnglish\": \"Sameera Mohammed Reza\",\n                    \"DCExpiryDate\": null,\n                    \"CSN\": \"N809224\",\n                    \"AccountTypeCode\": \"Non Member\",\n                    \"AccountStatus\": \"Active\",\n                    \"MainPhoneNumber\": null,\n                    \"MainFaxNumber\": null\n                },\n                {\n                    \"DCNameArabic\": \"عربي\",\n                    \"DCNameEnglish\": \"offshore\",\n                    \"DCExpiryDate\": \"03/03/2029\",\n                    \"CSN\": \"547291\",\n                    \"AccountTypeCode\": \"Member\",\n                    \"AccountStatus\": \"Active\",\n                    \"MainPhoneNumber\": null,\n                    \"MainFaxNumber\": null\n                }\n            ]\n        }\n    }\n}"
+        }
+      ]
+    }
+  ]
+}

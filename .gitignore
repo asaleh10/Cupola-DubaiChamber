@@ -1,0 +1,6 @@
+# build output and runtime logs
+APIs Code/out/
+APIs Code/logs/
+# local artefacts
+*.zip
+EMAIL-*.md

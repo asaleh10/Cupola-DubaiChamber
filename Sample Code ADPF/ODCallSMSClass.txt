@@ -1,0 +1,85 @@
+﻿public void servletImplementation(com.avaya.sce.runtimecommon.SCESession mySession) {
+
+		// TODO: Add your code here!
+		
+			String SMSAPI_MessageSMS4_Military = "";
+		
+		String SMSAPI_MobileNumber = mySession.getVariableField(IProjectVariables.API__SMS__MOBILE_NUMBER).getStringValue();
+		SMSAPI_MobileNumber = "0" + SMSAPI_MobileNumber;
+		
+		
+		
+		if ( "0".equals(mySession.getVariableField(IProjectVariables.API__SMS__DEATH_CASE__MILITARY).getStringValue())) {
+			
+			String messageText =
+				    "عزيزنا مُمثّل عائلة المتوفى/المتوفاة،\n\n" +
+				    "خالص تعازينا في وفاة فقيدكم، نسأل الله له الرحمة ولكم الصبر والسلوان.\n" +
+				    "يمكنكم التقديم على خدمة توزيع المعاش على المستحقين عبر منصة \"تم\"، وذلك بعد استخراج مستند إعلام الوراثة أو حصر الإرث.\n" +
+				    "https://adpension.info/3RVKtlk\n\n" +
+				    "للتفاصيل اضغط هنا: https://www.pension.gov.ae/Documents/consolation-1.pdf\n\n" +
+				    "لمشاهدة خطوات التقديم اضغط هنا: https://pension.gov.ae/Documents/Inheretance-service-guide.mp4\n\n" +
+				    "للاستفسار: 800555\n\n" +
+				    "نحن سندٌ لكم دائمًا\n" +
+				    "صندوق أبوظبي للتقاعد";
+			//SmsApiClient.sendSms(SMSAPI_MobileNumber, messageText);
+			String SMSAPI_Message = messageText;
+			String[] result = SmsApiClient.sendSms(SMSAPI_MobileNumber, SMSAPI_Message);
+			String smsStatus = result[0];
+			String smsStatusDesc = result[1];
+			String smsErrorDesc = result[2];
+			String smsUniqueId = result[3];
+			String smsTotalCount = result[4];
+        
+			mySession.getVariableField(IProjectVariables.API__SMS__DEATH_CASE__MESSAGE_STATUS).setValue(smsStatusDesc);
+			mySession.getVariableField(IProjectVariables.IS_MSG_4).setValue("0");
+			System.out.println("status     = " + result[0]);
+			System.out.println("statusDesc = " + result[1]);
+			System.out.println("errorDesc  = " + result[2]);
+			System.out.println("uniqueId   = " + result[3]);
+			System.out.println("totalCount = " + result[4]);
+			System.out.println("Mobile Number is  =" + SMSAPI_MobileNumber);
+			System.out.println("Message Number is  =" + mySession.getVariableField(IProjectVariables.API__SMS__DEATH_CASE__MESSAGE_NUM).getStringValue());
+			System.out.println("SMS Message is  = " + SMSAPI_Message );
+			System.out.println("SMS Message Send API Status  = " + mySession.getVariableField(IProjectVariables.API__SMS__DEATH_CASE__MESSAGE_STATUS).getStringValue());
+			System.out.println("Contact Type Military 1 or Civil 0 = " + mySession.getVariableField(IProjectVariables.API__SMS__DEATH_CASE__MILITARY).getStringValue() );
+			System.out.println("POM ContactNumber is  = " + mySession.getVariableField(IProjectVariables.POM_INFO, IProjectVariables.POM_INFO_FIELD_CONTACT_NUMBER).getStringValue());
+		}
+	
+		
+		
+		if ( "1".equals(mySession.getVariableField(IProjectVariables.API__SMS__DEATH_CASE__MILITARY).getStringValue())) {
+			
+			String messageText =
+				    "عزيزنا مُمثّل عائلة المتوفى/المتوفاة،\n\n" +
+				    "خالص تعازينا في وفاة فقيدكم، نسأل الله له الرحمة ولكم الصبر والسلوان.\n" +
+				    "يمكنكم التقديم على خدمة توزيع المعاش على المستحقين عبر منصة \"تم\"، وذلك بعد استخراج مستند إعلام الوراثة أو حصر الإرث.\n" +
+				    "https://adpension.info/439hIXp\n\n" +
+				    "للتفاصيل اضغط هنا: https://www.pension.gov.ae/Documents/consolation-1.pdf\n\n" +
+				    "لمشاهدة خطوات التقديم اضغط هنا: https://pension.gov.ae/Documents/Inheretance-service-guide.mp4\n\n" +
+				    "للاستفسار: 800555\n\n" +
+				    "نحن سندٌ لكم دائمًا\n" +
+				    "صندوق أبوظبي للتقاعد";
+			//SmsApiClient.sendSms(SMSAPI_MobileNumber, messageText);
+			
+			String SMSAPI_Message = messageText;
+			String[] result = SmsApiClient.sendSms(SMSAPI_MobileNumber, SMSAPI_Message);
+			String smsStatus = result[0];
+			String smsStatusDesc = result[1];
+			String smsErrorDesc = result[2];
+			String smsUniqueId = result[3];
+			String smsTotalCount = result[4];
+        
+			mySession.getVariableField(IProjectVariables.API__SMS__DEATH_CASE__MESSAGE_STATUS).setValue(smsStatusDesc);
+			mySession.getVariableField(IProjectVariables.IS_MSG_4).setValue("0");
+			System.out.println("status     = " + result[0]);
+			System.out.println("statusDesc = " + result[1]);
+			System.out.println("errorDesc  = " + result[2]);
+			System.out.println("uniqueId   = " + result[3]);
+			System.out.println("totalCount = " + result[4]);
+			System.out.println("Mobile Number is  =" + SMSAPI_MobileNumber);
+			System.out.println("Message Number is  =" + mySession.getVariableField(IProjectVariables.API__SMS__DEATH_CASE__MESSAGE_NUM).getStringValue());
+        	System.out.println("SMS Message is  = " + SMSAPI_Message );
+        	System.out.println("SMS Message Send API Status  = " + mySession.getVariableField(IProjectVariables.API__SMS__DEATH_CASE__MESSAGE_STATUS).getStringValue());
+        	System.out.println("Contact Type Military 1 or Civil 0 = " + mySession.getVariableField(IProjectVariables.API__SMS__DEATH_CASE__MILITARY).getStringValue() );
+        	System.out.println("POM ContactNumber is  = " + mySession.getVariableField(IProjectVariables.POM_INFO, IProjectVariables.POM_INFO_FIELD_CONTACT_NUMBER).getStringValue());
+		}

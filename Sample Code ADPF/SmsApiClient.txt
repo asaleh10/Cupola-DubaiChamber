@@ -1,0 +1,137 @@
+package flow;
+
+import java.io.*;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
+import org.json.JSONObject;
+
+
+public class SmsApiClient {
+
+    private static final String API_URL = "https://api-int.adrpbf.pension.gov.ae/gateway/SMSAPI/1.0/singleSMS";
+    private static final String API_KEY = "413e7639-2ef5-4a37-b0ba-b97998309d66";
+    private static final String APPLICATION_ID = "G2G";
+
+   
+    private static final int CONNECT_TIMEOUT_MS = 5000;
+    private static final int READ_TIMEOUT_MS = 8000;
+
+ 
+    public static String[] sendSms(String mobileNumber, String messageText) {
+        HttpURLConnection conn = null;
+        try {
+            // ---- Build request JSON ----
+            JSONObject header = new JSONObject();
+            header.put("applicationId", APPLICATION_ID);
+
+            JSONObject body = new JSONObject();
+            body.put("mobileNumber", mobileNumber);
+            body.put("messageText", messageText);
+
+            JSONObject requestJson = new JSONObject();
+            requestJson.put("header", header);
+            requestJson.put("body", body);
+
+            byte[] requestBytes = requestJson.toString().getBytes(StandardCharsets.UTF_8);
+
+            
+            // ---- TROUBLESHOOTING: print outgoing request ----
+            System.out.println("SmsApiClient: POST " + API_URL);
+            System.out.println("SmsApiClient: Request headers -> ADPF-APIKey: " + API_KEY);
+            System.out.println("SmsApiClient: Request body -> " + requestJson.toString());
+            
+            // ---- Open connection ----
+            URL url = new URL(API_URL);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
+            conn.setConnectTimeout(CONNECT_TIMEOUT_MS);
+            conn.setReadTimeout(READ_TIMEOUT_MS);
+            conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setRequestProperty("ADPF-APIKey", API_KEY);
+
+            // ---- Write request body ----
+            try (OutputStream os = conn.getOutputStream()) {
+                os.write(requestBytes);
+                os.flush();
+            }
+
+            int statusCode = conn.getResponseCode();
+
+            // ---- Read response (success or error stream) ----
+            InputStream is = (statusCode >= 200 && statusCode < 300)
+                    ? conn.getInputStream()
+                    : conn.getErrorStream();
+
+            String responseText = readStream(is);
+
+            if (statusCode < 200 || statusCode >= 300) {
+                return new String[] {
+                        "ERROR",
+                        "HTTP_" + statusCode,
+                        "Non-2xx response: " + responseText,
+                        "",
+                        ""
+                };
+            }
+
+            // ---- TROUBLESHOOTING: print raw response ----
+            System.out.println("SmsApiClient: Response HTTP status -> " + statusCode);
+            System.out.println("SmsApiClient: Response body -> " + responseText);
+ 
+         
+            
+            
+            
+            
+            // ---- Parse response JSON ----
+            JSONObject responseJson = new JSONObject(responseText);
+            JSONObject response = responseJson.getJSONObject("response");
+            JSONObject respHeader = response.getJSONObject("header");
+            JSONObject respBody = response.optJSONObject("body");
+
+            String status = respHeader.optString("status", "");
+            String statusDesc = respHeader.optString("statusDesc", "");
+            String errorDesc = respHeader.optString("errorDesc", "");
+            String uniqueId = respHeader.optString("uniqueId", "");
+            String totalCount = (respBody != null) ? respBody.optString("TotalCount", "") : "";
+
+            return new String[] { status, statusDesc, errorDesc, uniqueId, totalCount };
+
+        } catch (SocketTimeoutException e) {
+            return new String[] { "ERROR", "TIMEOUT", e.getMessage(), "", "" };
+        } catch (Exception e) {
+            return new String[] { "ERROR", "EXCEPTION", e.getMessage(), "", "" };
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
+    }
+
+    private static String readStream(InputStream is) throws IOException {
+        if (is == null) return "";
+        StringBuilder sb = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+        }
+        return sb.toString();
+    }
+
+    // Quick standalone test - run this directly (outside OD) to verify connectivity
+    // before wiring it into the call flow. Remove or ignore for production packaging.
+   /* public static void main(String[] args) {
+        String mobile = "971556078903";
+        String msg = "Test message from SmsApiClient";
+        String[] result = sendSms(mobile, msg);
+        System.out.println("status     = " + result[0]);
+        System.out.println("statusDesc = " + result[1]);
+        System.out.println("errorDesc  = " + result[2]);
+        System.out.println("uniqueId   = " + result[3]);
+        System.out.println("totalCount = " + result[4]);
+    }*/
+}
