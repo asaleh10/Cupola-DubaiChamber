@@ -1,24 +1,15 @@
 package flow;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.UUID;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -26,7 +17,6 @@ import org.json.JSONObject;
 /**
  * GenericGetUserProfileAPI - find a user by mobile number and list their accounts.
  * Returns String[]: [0]=status SUCCESS|FAILED|ERROR, [1]=code, [2]=message, [3..]=every response field (see IDX_*).
- * Logs every call to <LOG_DIR>/UserProfileClient/UserProfileClient_yyyy-MM-dd.log.
  */
 public class UserProfileClient {
 
@@ -42,15 +32,7 @@ public class UserProfileClient {
     private static final int CONNECT_TIMEOUT_MS = 5000;
     private static final int READ_TIMEOUT_MS = 10000;
 
-    // Logging. Defaults below; override with JVM properties -Ddc.api.log.dir, -Ddc.api.log.retentionDays,
-    // -Ddc.api.log.enabled, -Ddc.api.log.console, -Ddc.api.log.maskApiKey (e.g. in Tomcat setenv / JAVA_OPTS).
-    private static final String LOG_NAME = "UserProfileClient";
-    private static final String LOG_DIR = System.getProperty("dc.api.log.dir",
-            System.getProperty("catalina.base", System.getProperty("user.dir")) + File.separator + "logs");
-    private static final int LOG_RETENTION_DAYS = intProp("dc.api.log.retentionDays", 30);   // 0 = keep forever
-    private static final boolean LOG_ENABLED = boolProp("dc.api.log.enabled", true);
-    private static final boolean LOG_TO_CONSOLE = boolProp("dc.api.log.console", true);
-    private static final boolean LOG_MASK_API_KEY = boolProp("dc.api.log.maskApiKey", false);
+    public static boolean DEBUG = true;
 
     public static final String STATUS_SUCCESS = "SUCCESS";
     public static final String STATUS_FAILED = "FAILED";
@@ -116,12 +98,9 @@ public class UserProfileClient {
 
     /** mobileNumber with country code, no "+", e.g. "97121234234". */
     public static String[] getUserProfileByMobile(String mobileNumber) {
-        String callId = newCallId();
-        log(callId, "INFO", "CALL getUserProfileByMobile mobileNumber=" + mobileNumber);
-
         mobileNumber = nz(mobileNumber);
         if (mobileNumber.isEmpty()) {
-            return finish(callId, failedResult(CODE_INVALID_INPUT, "mobileNumber is required"));
+            return failedResult(CODE_INVALID_INPUT, "mobileNumber is required");
         }
 
         try {
@@ -135,12 +114,12 @@ public class UserProfileClient {
             JSONObject request = new JSONObject();
             request.put("body", body);
 
-            String[] http = httpPost(callId, request.toString());
+            String[] http = httpPost(request.toString());
             int statusCode = Integer.parseInt(http[0]);
             String responseText = http[1];
 
             if (statusCode < 200 || statusCode >= 300) {
-                return finish(callId, errorResult("HTTP_" + statusCode, "Non-2xx response", responseText));
+                return errorResult("HTTP_" + statusCode, "Non-2xx response", responseText);
             }
 
             JSONObject json = new JSONObject(responseText);
@@ -165,7 +144,7 @@ public class UserProfileClient {
                         r[IDX_MESSAGE] = "No user profile returned";
                     }
                 }
-                return finish(callId, r);
+                return r;
             }
 
             r[IDX_FIRST_NAME] = str(user, "FirstName");
@@ -190,14 +169,12 @@ public class UserProfileClient {
                 r[IDX_FIRST_ACCOUNT_CSN] = str(first, "CSN");
                 r[IDX_FIRST_ACCOUNT_NAME] = str(first, "DCNameEnglish");
             }
-            return finish(callId, r);
+            return r;
 
         } catch (SocketTimeoutException e) {
-            log(callId, "ERROR", "TIMEOUT " + e + System.lineSeparator() + stackTrace(e));
-            return finish(callId, errorResult(CODE_TIMEOUT, e.getMessage(), ""));
+            return errorResult(CODE_TIMEOUT, e.getMessage(), "");
         } catch (Exception e) {
-            log(callId, "ERROR", "EXCEPTION " + e + System.lineSeparator() + stackTrace(e));
-            return finish(callId, errorResult(CODE_EXCEPTION, e.getClass().getSimpleName() + ": " + e.getMessage(), ""));
+            return errorResult(CODE_EXCEPTION, e.getClass().getSimpleName() + ": " + e.getMessage(), "");
         }
     }
 
@@ -226,19 +203,17 @@ public class UserProfileClient {
             acc[ACC_IDX_RM_EMAIL] = str(a, "RelationshipManagerEmailAddr");
             acc[ACC_IDX_RM_PHONE] = str(a, "RelationshipManagerPhone");
         } catch (Exception e) {
-            log(newCallId(), "WARN", "getAccount(" + index + ") could not parse accounts JSON: " + e);
+            // malformed JSON -> empty account
         }
         return acc;
     }
 
-    private static String[] httpPost(String callId, String requestJson) throws IOException {
+    private static String[] httpPost(String requestJson) throws IOException {
         byte[] requestBytes = requestJson.getBytes(StandardCharsets.UTF_8);
-        log(callId, "INFO", "REQUEST POST " + API_URL);
-        log(callId, "INFO", "REQUEST headers Content-Type=application/json; charset=UTF-8 | Accept=application/json"
-                + " | api-key=" + (LOG_MASK_API_KEY ? mask(API_KEY) : API_KEY));
-        log(callId, "INFO", "REQUEST body " + requestJson);
-        long started = System.currentTimeMillis();
-
+        if (DEBUG) {
+            log("POST " + API_URL);
+            log("Request body -> " + requestJson);
+        }
         HttpURLConnection conn = null;
         try {
             URL url = new URL(API_URL);
@@ -262,10 +237,10 @@ public class UserProfileClient {
                     : conn.getErrorStream();
             String responseText = readStream(is);
 
-            long ms = System.currentTimeMillis() - started;
-            log(callId, statusCode >= 200 && statusCode < 300 ? "INFO" : "ERROR",
-                    "RESPONSE HTTP " + statusCode + " in " + ms + " ms");
-            log(callId, "INFO", "RESPONSE body " + responseText);
+            if (DEBUG) {
+                log("Response HTTP status -> " + statusCode);
+                log("Response body -> " + responseText);
+            }
             return new String[] { String.valueOf(statusCode), responseText };
         } finally {
             if (conn != null) {
@@ -295,8 +270,6 @@ public class UserProfileClient {
     private static String[] newResult() {
         String[] r = new String[RESULT_SIZE];
         Arrays.fill(r, "");
-        r[IDX_ACCOUNT_COUNT] = "0";
-        r[IDX_ACCOUNTS_JSON] = "[]";
         return r;
     }
 
@@ -305,6 +278,8 @@ public class UserProfileClient {
         r[IDX_STATUS] = STATUS_ERROR;
         r[IDX_CODE] = code;
         r[IDX_MESSAGE] = message == null ? "" : message;
+        r[IDX_ACCOUNT_COUNT] = "0";
+        r[IDX_ACCOUNTS_JSON] = "[]";
         r[IDX_RAW_RESPONSE] = rawResponse == null ? "" : rawResponse;
         return r;
     }
@@ -314,6 +289,8 @@ public class UserProfileClient {
         r[IDX_STATUS] = STATUS_FAILED;
         r[IDX_CODE] = code;
         r[IDX_MESSAGE] = message;
+        r[IDX_ACCOUNT_COUNT] = "0";
+        r[IDX_ACCOUNTS_JSON] = "[]";
         return r;
     }
 
@@ -356,111 +333,8 @@ public class UserProfileClient {
         return a;
     }
 
-    // ---------------------------------------------------------------- logging
-
-    private static final Object LOG_LOCK = new Object();
-    private static String lastCleanupDay = "";
-
-    /** Logs the final result line and returns r unchanged. */
-    private static String[] finish(String callId, String[] r) {
-        String level = STATUS_ERROR.equals(r[IDX_STATUS]) ? "ERROR"
-                : STATUS_FAILED.equals(r[IDX_STATUS]) ? "WARN" : "INFO";
-        log(callId, level, "RESULT status=" + r[IDX_STATUS] + " code=" + r[IDX_CODE] + " message=" + r[IDX_MESSAGE]
-                + " accountCount=" + r[IDX_ACCOUNT_COUNT]);
-        return r;
-    }
-
-    /** Appends one line to today's file; never throws. */
-    private static void log(String callId, String level, String message) {
-        String ts = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
-        String line = ts + " " + level + " [" + callId + "] " + message;
-        if (LOG_TO_CONSOLE) {
-            System.out.println(LOG_NAME + ": " + line);
-        }
-        if (!LOG_ENABLED) {
-            return;
-        }
-        try {
-            String day = ts.substring(0, 10);
-            File dir = new File(LOG_DIR, LOG_NAME);
-            synchronized (LOG_LOCK) {
-                if (!dir.exists()) {
-                    dir.mkdirs();
-                }
-                File file = new File(dir, LOG_NAME + "_" + day + ".log");
-                try (Writer w = new OutputStreamWriter(new FileOutputStream(file, true), StandardCharsets.UTF_8)) {
-                    w.write(line);
-                    w.write(System.lineSeparator());
-                }
-                if (!day.equals(lastCleanupDay)) {
-                    lastCleanupDay = day;
-                    deleteOldLogs(dir, day);
-                }
-            }
-        } catch (Exception e) {
-            System.err.println(LOG_NAME + ": cannot write log file: " + e);
-        }
-    }
-
-    /** Keeps today's file plus LOG_RETENTION_DAYS-1 previous days; 0 or less keeps everything. */
-    private static void deleteOldLogs(File dir, String today) {
-        if (LOG_RETENTION_DAYS <= 0) {
-            return;
-        }
-        File[] files = dir.listFiles();
-        if (files == null) {
-            return;
-        }
-        try {
-            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-            long cutoff = df.parse(today).getTime() - LOG_RETENTION_DAYS * 86400000L;
-            String prefix = LOG_NAME + "_";
-            for (File f : files) {
-                String n = f.getName();
-                if (!n.startsWith(prefix) || !n.endsWith(".log")) {
-                    continue;
-                }
-                try {
-                    Date fileDay = df.parse(n.substring(prefix.length(), n.length() - 4));
-                    if (fileDay.getTime() <= cutoff) {
-                        f.delete();
-                    }
-                } catch (Exception ignored) {
-                    // not one of our dated files
-                }
-            }
-        } catch (Exception e) {
-            System.err.println(LOG_NAME + ": log cleanup failed: " + e);
-        }
-    }
-
-    private static String newCallId() {
-        return UUID.randomUUID().toString().substring(0, 8);
-    }
-
-    private static String mask(String secret) {
-        if (secret == null || secret.length() < 8) {
-            return "****";
-        }
-        return secret.substring(0, 4) + "****" + secret.substring(secret.length() - 4);
-    }
-
-    private static String stackTrace(Throwable t) {
-        StringWriter sw = new StringWriter();
-        t.printStackTrace(new PrintWriter(sw));
-        return sw.toString();
-    }
-
-    private static int intProp(String name, int def) {
-        try {
-            return Integer.parseInt(System.getProperty(name, String.valueOf(def)).trim());
-        } catch (Exception e) {
-            return def;
-        }
-    }
-
-    private static boolean boolProp(String name, boolean def) {
-        return Boolean.parseBoolean(System.getProperty(name, String.valueOf(def)).trim());
+    private static void log(String message) {
+        System.out.println("UserProfileClient: " + message);
     }
 
     // CLI: java -cp "out;lib/json-20240303.jar" flow.UserProfileClient 97121234234
@@ -481,8 +355,6 @@ public class UserProfileClient {
             System.out.println("Account[" + i + "]");
             print(ACC_LABELS, getAccount(r[IDX_ACCOUNTS_JSON], i));
         }
-        System.out.println("Log file: " + new File(new File(LOG_DIR, LOG_NAME),
-                LOG_NAME + "_" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ".log").getAbsolutePath());
         System.exit(STATUS_SUCCESS.equals(r[IDX_STATUS]) ? 0 : 1);
     }
 

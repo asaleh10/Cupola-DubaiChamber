@@ -79,12 +79,6 @@ mySession.getVariableField(IProjectVariables.API__PAY__URL).setValue(r[PaymentLi
 
 Any other field is read the same way with its `IDX_*` constant from the table above.
 
-## Logging
-
-Every call writes to `<LOG_DIR>/PaymentLinkClient/PaymentLinkClient_yyyy-MM-dd.log` (Tomcat `logs` folder when running in OD):
-CALL, REQUEST url / headers / body, RESPONSE status / time / body, RESULT, all with one call id. Retention and other
-settings are JVM properties `dc.api.log.*`, see [README – Logging](README.md#logging).
-
 ## CLI test
 
 Only run this against SIT with a test SR and test login. It sends a real e-mail.
