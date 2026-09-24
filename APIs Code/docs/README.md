@@ -59,7 +59,7 @@ four classes, except the URL which is per class.
 | `dc.api.apiKey` | `setApiKey(String)` | SIT key | Sent as HTTP header `api-key`. |
 | `dc.api.connectTimeoutMs` | `setConnectTimeoutMs(int)` | `5000` | TCP / TLS connect timeout. |
 | `dc.api.readTimeoutMs` | `setReadTimeoutMs(int)` | `10000` | Wait for the response. |
-| `dc.api.trustAll` | `setTrustAllCertificates(boolean)` | `false` | `true` skips certificate and hostname checks (self-signed / expired certificates in test environments). Never in production. |
+| `dc.api.trustAll` | `setTrustAllCertificates(boolean)` | `true` | Skips certificate and hostname checks, so self-signed or expired certificates do not block the call. Set `false` to enforce certificate validation. |
 | `dc.api.logDir` | `setLogDir(String)` | `<catalina.base>/logs`, else `./logs` | Root log folder. Each class creates its own sub-folder under it. |
 | `dc.api.logRetentionDays` | `setLogRetentionDays(int)` | `30` | Daily files to keep: today plus N-1 previous days. `7` = one week, `365` = one year, `0` = never delete. |
 | `dc.api.consoleLogging` | `setConsoleLogging(boolean)` | `false` | Also print every log line to stdout (catalina.out). The CLI turns it on. |
@@ -68,13 +68,13 @@ four classes, except the URL which is per class.
 Tomcat, in `bin/setenv.bat` (Windows) or `bin/setenv.sh`:
 
 ```bat
-set CATALINA_OPTS=%CATALINA_OPTS% -Ddc.api.logRetentionDays=7 -Ddc.api.trustAll=true
+set CATALINA_OPTS=%CATALINA_OPTS% -Ddc.api.logRetentionDays=7 -Ddc.api.trustAll=false
 ```
 
 Or from OD, once, for example in the first servlet block of the application:
 
 ```java
-ValidateMembershipClient.setTrustAllCertificates(true);
+ValidateMembershipClient.setTrustAllCertificates(false);
 ValidateMembershipClient.setLogRetentionDays(7);
 ```
 
@@ -106,11 +106,12 @@ Every method returns a `String[]`. Elements are never `null`; a missing value is
 | `ERROR` | `INVALID_RESPONSE` | HTTP 2xx but body is not JSON | yes |
 | `ERROR` | `TIMEOUT` | Connect or read timeout | yes |
 | `ERROR` | `CONNECTION_ERROR` | Host unknown, connection refused, no route, other I/O error | attempted |
-| `ERROR` | `SSL_ERROR` | Certificate or TLS failure; `dc.api.trustAll=true` skips the check in test | attempted |
+| `ERROR` | `SSL_ERROR` | Certificate or TLS failure; only possible when `dc.api.trustAll=false` | attempted |
 | `ERROR` | `ERROR` | Anything unexpected; stack trace in the log | – |
 
 Verified on 24 Sep 2026 against SIT: 404 gives `HTTP_ERROR`, a wrong key gives `AUTH_ERROR` (HTTP 403), an unknown
-host gives `CONNECTION_ERROR`, an expired certificate gives `SSL_ERROR` and passes with `trustAll=true`.
+host gives `CONNECTION_ERROR`, an expired certificate passes the TLS step with the default `trustAll=true` and gives
+`SSL_ERROR` with `trustAll=false`.
 
 The status strings are also available as constants on each class (`STATUS_SUCCESS`, `STATUS_FAILED`,
 `STATUS_ERROR`). `result[IDX_STATUS]` tells whether the call itself worked. Business values such as a member
@@ -151,10 +152,9 @@ call returns normally and one line goes to stderr.
 
 ## SSL / TLS
 
-Certificates are checked normally by default. If a test environment uses a self-signed or expired certificate the
-call returns `ERROR` / `SSL_ERROR`. Set `dc.api.trustAll=true` (or call `setTrustAllCertificates(true)`) to skip
-certificate and hostname checks; this must stay `false` in production. SIT currently has a valid certificate, so
-no change is needed there.
+Certificate and hostname checks are **skipped by default** (`dc.api.trustAll` = `true`), so a self-signed or expired
+certificate on the API side does not block calls. To enforce certificate validation set `dc.api.trustAll=false`
+(or call `setTrustAllCertificates(false)`); with validation on, a bad certificate returns `ERROR` / `SSL_ERROR`.
 ## Building and testing from the command line
 
 Requirements: a JDK (8 or newer) on the PATH. The machine must be able to reach `apisit.dubaichamber.com`.
@@ -187,7 +187,7 @@ Each class prints its log lines to the console, then a labelled result table. Th
 
 Windows PowerShell notes:
 
-- Quote JVM options that contain a dot: `java "-Ddc.api.trustAll=true" -cp ...`.
+- Quote JVM options that contain a dot: `java "-Ddc.api.trustAll=false" -cp ...`.
 - An empty argument must be written as `'""'`, otherwise PowerShell drops it.
 
 ## Verification log

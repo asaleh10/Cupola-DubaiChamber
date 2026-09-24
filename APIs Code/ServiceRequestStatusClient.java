@@ -58,7 +58,7 @@ public final class ServiceRequestStatusClient {
             "_5oGKrI3be5GtHMn4WjALPsEvzjpn3T-4nGwSvrNcCE");
     private static volatile int connectTimeoutMs = Integer.getInteger("dc.api.connectTimeoutMs", 5000);
     private static volatile int readTimeoutMs = Integer.getInteger("dc.api.readTimeoutMs", 10000);
-    private static volatile boolean trustAllCertificates = Boolean.getBoolean("dc.api.trustAll");
+    private static volatile boolean trustAllCertificates = !"false".equalsIgnoreCase(System.getProperty("dc.api.trustAll"));
     private static volatile String logDir = System.getProperty("dc.api.logDir", defaultLogDir());
     private static volatile int logRetentionDays = Integer.getInteger("dc.api.logRetentionDays", 30);
     private static volatile boolean consoleLogging = Boolean.getBoolean("dc.api.consoleLogging");
@@ -357,7 +357,7 @@ public final class ServiceRequestStatusClient {
             return finish(r, STATUS_ERROR, CODE_CONNECTION_ERROR, "Cannot reach API: " + e, start);
         } catch (SSLException e) {
             return finish(r, STATUS_ERROR, CODE_SSL_ERROR, "SSL/TLS error: " + e.getMessage()
-                    + " (set dc.api.trustAll=true to skip certificate checks in test environments)", start);
+                    + " (certificate validation is on; set dc.api.trustAll=true to skip it)", start);
         } catch (IOException e) {
             return finish(r, STATUS_ERROR, CODE_CONNECTION_ERROR, "I/O error: " + e, start);
         } catch (Exception e) {
