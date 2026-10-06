@@ -44,7 +44,7 @@ import org.json.JSONObject;
  * - Configuration via JVM properties (-Ddc.payment.url, -Ddc.api.apiKey, -Ddc.api.connectTimeoutMs,
  *   -Ddc.api.readTimeoutMs, -Ddc.api.trustAll, -Ddc.api.logDir, -Ddc.api.logRetentionDays,
  *   -Ddc.api.consoleLogging, -Ddc.api.logMaskSecrets) or the static setters.
- * - CLI: java -cp "out;lib/json-20240303.jar" flow.PaymentLinkClient 120804978308 [--trustall] [--logdir DIR]
+ * - CLI: java -cp "out;lib/json-20240303.jar" flow.PaymentLinkClient 120804978308 TESTUSERSIT DubaiPay [--trustall]
  */
 public final class PaymentLinkClient {
 
@@ -65,8 +65,6 @@ public final class PaymentLinkClient {
 
     private static final String LOG_NAME = "PaymentLinkClient";
     private static final String PROCESS_NAME = "DC Generate Send ePay URL WF";
-    private static final String LOGIN_NAME = "TESTUSERSIT";
-    private static final String PAYMENT_TYPE = "DubaiPay";
     private static final int MAX_LOGGED_BODY = 4000;
     private static SSLSocketFactory trustAllFactory;
 
@@ -131,17 +129,25 @@ public final class PaymentLinkClient {
     // Main API call
     // ------------------------------------------------------------------
 
-    /** srNumber digits only, e.g. "120804978308"; the class inserts "-" after the first digit. Never throws. */
-    public static String[] generateAndSendPaymentLink(String srNumber) {
+    /**
+     * @param srNumber    digits only, e.g. "120804978308"; the class inserts "-" after the first digit
+     * @param loginName   portal login of the user who receives the link, e.g. "TESTUSERSIT"
+     * @param paymentType payment channel, e.g. "DubaiPay"
+     * Never throws.
+     */
+    public static String[] generateAndSendPaymentLink(String srNumber, String loginName, String paymentType) {
         long start = System.currentTimeMillis();
         String[] r = newResult();
         String callId = newCallId();
         r[IDX_CALL_ID] = callId;
-        log("INFO", callId, "START generateAndSendPaymentLink srNumber=" + srNumber);
+        log("INFO", callId, "START generateAndSendPaymentLink srNumber=" + srNumber + " loginName=" + loginName
+                + " paymentType=" + paymentType);
 
         srNumber = formatSrNumber(srNumber);
-        if (srNumber.isEmpty()) {
-            return finish(r, STATUS_FAILED, CODE_INVALID_INPUT, "srNumber is required", start);
+        loginName = nz(loginName);
+        paymentType = nz(paymentType);
+        if (srNumber.isEmpty() || loginName.isEmpty() || paymentType.isEmpty()) {
+            return finish(r, STATUS_FAILED, CODE_INVALID_INPUT, "srNumber, loginName and paymentType are required", start);
         }
         String url = nz(apiUrl);
         if (!url.toLowerCase().startsWith("http://") && !url.toLowerCase().startsWith("https://")) {
@@ -152,8 +158,8 @@ public final class PaymentLinkClient {
             JSONObject body = new JSONObject();
             body.put("ProcessName", PROCESS_NAME);
             body.put("SR Number", srNumber);
-            body.put("LoginName", LOGIN_NAME);
-            body.put("PaymentType", PAYMENT_TYPE);
+            body.put("LoginName", loginName);
+            body.put("PaymentType", paymentType);
             JSONObject request = new JSONObject();
             request.put("body", body);
 
@@ -442,7 +448,7 @@ public final class PaymentLinkClient {
 
     // ------------------------------------------------------------------
     // Command-line test (sends a real e-mail)
-    //   java -cp "out;lib/json-20240303.jar" flow.PaymentLinkClient 120804978308 [--trustall] [--url URL] [--apikey KEY] [--logdir DIR]
+    //   java -cp "out;lib/json-20240303.jar" flow.PaymentLinkClient 120804978308 TESTUSERSIT DubaiPay [--trustall] [--url URL] [--apikey KEY] [--logdir DIR]
     // ------------------------------------------------------------------
     public static void main(String[] args) {
         try {
@@ -450,7 +456,9 @@ public final class PaymentLinkClient {
         } catch (Exception ignored) {
             // keep default console encoding
         }
-        String input = null;
+        String srNumber = null;
+        String loginName = null;
+        String paymentType = null;
         for (int a = 0; a < args.length; a++) {
             String arg = args[a];
             boolean hasNext = a + 1 < args.length;
@@ -462,21 +470,28 @@ public final class PaymentLinkClient {
                 setApiKey(args[++a]);
             } else if ("--logdir".equalsIgnoreCase(arg) && hasNext) {
                 setLogDir(args[++a]);
-            } else if (input == null && !arg.startsWith("--")) {
-                input = arg;
-            } else {
+            } else if (arg.startsWith("--")) {
                 System.out.println("Ignoring unknown argument: " + arg);
+            } else if (srNumber == null) {
+                srNumber = arg;
+            } else if (loginName == null) {
+                loginName = arg;
+            } else if (paymentType == null) {
+                paymentType = arg;
+            } else {
+                System.out.println("Ignoring extra argument: " + arg);
             }
         }
-        if (input == null) {
-            System.out.println("Usage: flow.PaymentLinkClient <srNumberDigits> [--trustall] [--url URL] [--apikey KEY] [--logdir DIR]");
+        if (srNumber == null || loginName == null || paymentType == null) {
+            System.out.println("Usage: flow.PaymentLinkClient <srNumberDigits> <loginName> <paymentType> [--trustall] [--url URL] [--apikey KEY] [--logdir DIR]");
+            System.out.println("  e.g. flow.PaymentLinkClient 120804978308 TESTUSERSIT DubaiPay");
             System.exit(2);
             return;
         }
         setConsoleLogging(true);
         System.out.println("Log folder: " + new File(logDir, LOG_NAME).getAbsolutePath());
 
-        String[] r = generateAndSendPaymentLink(input);
+        String[] r = generateAndSendPaymentLink(srNumber, loginName, paymentType);
         System.out.println("---------------- RESULT ----------------");
         for (int i = 0; i < LABELS.length; i++) {
             System.out.println(String.format("%-24s = %s", LABELS[i], r[i]));

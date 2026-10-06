@@ -14,7 +14,7 @@ the login user.
 ## Methods
 
 ```java
-public static String[] generateAndSendPaymentLink(String srNumber)
+public static String[] generateAndSendPaymentLink(String srNumber, String loginName, String paymentType)
 
 // "120804978308" -> "1-20804978308"
 public static String formatSrNumber(String srNumber)
@@ -25,9 +25,10 @@ public static String formatSrNumber(String srNumber)
 | Parameter | Required | Example | Notes |
 |---|---|---|---|
 | `srNumber` | Yes | `120804978308` | Digits only as collected from the caller. The class inserts `-` after the first digit and sends `1-20804978308`. A value that already contains `-` is sent unchanged. |
+| `loginName` | Yes | `TESTUSERSIT` | Portal login of the user who receives the link. In the flow, take it from `UserProfileClient` result `IDX_LOGIN_NAME`. |
+| `paymentType` | Yes | `DubaiPay` | Payment channel, sent as-is. |
 
-`LoginName` (`TESTUSERSIT`) and `PaymentType` (`DubaiPay`) are constants inside the class, `LOGIN_NAME` and
-`PAYMENT_TYPE`. Empty `srNumber` returns `FAILED` / `INVALID_INPUT` without calling the API.
+If any of the three is empty the method returns `FAILED` / `INVALID_INPUT` without calling the API.
 
 ## Output – `String[18]`
 
@@ -70,9 +71,11 @@ URL: property `dc.payment.url` or `setApiUrl()`. Key, timeouts, trust-all SSL an
 Call once, then copy the values you need into project variables using the `IDX_*` constants.
 
 ```java
-String srDigits = mySession.getVariableField(IProjectVariables.API__SR__DIGITS).getStringValue();
+String srDigits    = mySession.getVariableField(IProjectVariables.API__SR__DIGITS).getStringValue();
+String loginName   = mySession.getVariableField(IProjectVariables.API__USER__LOGIN_NAME).getStringValue();
+String paymentType = mySession.getVariableField(IProjectVariables.API__PAY__TYPE).getStringValue();   // e.g. DubaiPay
 
-String[] r = PaymentLinkClient.generateAndSendPaymentLink(srDigits);
+String[] r = PaymentLinkClient.generateAndSendPaymentLink(srDigits, loginName, paymentType);
 
 mySession.getVariableField(IProjectVariables.API__PAY__CALL_STATUS).setValue(r[PaymentLinkClient.IDX_STATUS]);   // SUCCESS / FAILED / ERROR
 mySession.getVariableField(IProjectVariables.API__PAY__CODE).setValue(r[PaymentLinkClient.IDX_CODE]);
@@ -92,10 +95,10 @@ Only run this against SIT with a test SR and test login. It sends a real e-mail.
 
 ```bat
 build.cmd
-java -cp "out;lib\json-20240303.jar" flow.PaymentLinkClient 120804978308
+java -cp "out;lib\json-20240303.jar" flow.PaymentLinkClient 120804978308 TESTUSERSIT DubaiPay
 ```
 
-Usage: `flow.PaymentLinkClient <srNumberDigits> [--trustall] [--url URL] [--apikey KEY] [--logdir DIR]`
+Usage: `flow.PaymentLinkClient <srNumberDigits> <loginName> <paymentType> [--trustall] [--url URL] [--apikey KEY] [--logdir DIR]`
 
 Expected output, based on the response captured in Postman on 21 Sep 2026:
 

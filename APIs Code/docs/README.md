@@ -78,8 +78,8 @@ ValidateMembershipClient.setTrustAllCertificates(false);
 ValidateMembershipClient.setLogRetentionDays(7);
 ```
 
-Fixed request values that are not configuration (`ProcessName`, the empty licence fields, `LoginName` /
-`PaymentType` of the payment API) are constants at the top of each class.
+Fixed request values that are not configuration (`ProcessName`, the empty licence and profile key fields) are
+constants at the top of each class.
 ## Result convention (all four classes)
 
 Every method returns a `String[]`. Elements are never `null`; a missing value is `""`.
@@ -204,7 +204,7 @@ Tested live against SIT on 21 Sep 2026 with the CLI:
 | ServiceRequestStatusClient | `sr 120802411138` | SUCCESS, "Approved and Payment Awaited" |
 | ServiceRequestStatusClient | `csn 1298` | SUCCESS, 464 total records, 10 returned in page |
 | ServiceRequestStatusClient | `sr 199999999999` | FAILED, Siebel code SBL-CMI-00122 "No record matching..." |
-| PaymentLinkClient | `120804978308` | Compiled and verified against the Postman capture only. Not executed from the CLI, because every call creates a transaction and sends an e-mail. |
+| PaymentLinkClient | `120804978308 TESTUSERSIT DubaiPay` | Compiled and verified against the Postman capture only. Not executed from the CLI, because every call creates a transaction and sends an e-mail. |
 
 Note: SIT test data changes from day to day. The Postman collection mobile `971506584588` stopped resolving before
 21 Sep; `97121234234` resolved on 21 and 22 Sep but returned "User details not found" on 24 Sep. Member 1298 showed
