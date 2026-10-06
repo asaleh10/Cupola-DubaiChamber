@@ -1,7 +1,6 @@
 # SpeakToRelationshipManagerClient
 
-Registers a platinum member's request to speak with their relationship manager. The backend creates a record
-in Siebel and returns its ids.
+Registers a platinum member's request to speak with their relationship manager. 
 
 | | |
 |---|---|
@@ -9,7 +8,7 @@ in Siebel and returns its ids.
 | Endpoint | `POST https://apisit.dubaichamber.com/dcci/DCCICPINTEGRATION/DCCICXPROJECTIVR_APIS/1.0/SpeakToARelationshipManager` |
 | Process name | `DC Speak With Relationship Manager IVR WF` |
 | Headers | `api-key` only (masked in the log by default) |
-| Side effects | **Yes.** Each successful call creates a record in Siebel. |
+
 
 ## Methods
 
@@ -59,7 +58,7 @@ Call status values:
 
 ## Configuration and logging
 
-URL: property `dc.speakrm.url` or `setApiUrl()`. Key, timeouts, trust-all SSL and logging are the shared `dc.api.*` properties / setters, see [README – Configuration](README.md#configuration). Every call writes to `<logDir>/SpeakToRelationshipManagerClient/SpeakToRelationshipManagerClient_yyyy-MM-dd.log` with the call id returned in `IDX_CALL_ID`.
+URL: property `dc.speakrm.url` or `setApiUrl()`. Key, timeouts, trust-all SSL and logging are the shared `dc.api.*` properties / setters. Every call writes to `<logDir>/SpeakToRelationshipManagerClient/SpeakToRelationshipManagerClient_yyyy-MM-dd.log` with the call id returned in `IDX_CALL_ID`.
 
 ## Usage in an OD servlet block
 
