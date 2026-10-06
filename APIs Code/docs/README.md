@@ -1,6 +1,6 @@
 # Dubai Chamber IVR – Integration API Classes
 
-Four self-contained Java classes that wrap the Dubai Chamber (DCCI) REST APIs used by the IVR, written in
+Five self-contained Java classes that wrap the Dubai Chamber (DCCI) REST APIs used by the IVR, written in
 the same style as the ADPF `SmsApiClient` so each one can be dropped into an Avaya Orchestration Designer
 (OD) project on its own and called from a `servletImplementation` block.
 
@@ -10,6 +10,7 @@ the same style as the ADPF `SmsApiClient` so each one can be dropped into an Ava
 | [UserProfileClient](UserProfileClient.md) | GenericGetUserProfileAPI | Identify a caller by mobile number and list their accounts |
 | [ServiceRequestStatusClient](ServiceRequestStatusClient.md) | GetSRSummary | Status of one SR by number, or the list of SRs of a CSN |
 | [PaymentLinkClient](PaymentLinkClient.md) | GenSendPaymentLink | Generate an ePay link for an SR and e-mail it to the user |
+| [SpeakToRelationshipManagerClient](SpeakToRelationshipManagerClient.md) | SpeakToARelationshipManager | Register a platinum member's request to speak with their relationship manager |
 
 Each class is independent: it carries its own URL, key, HTTP code and JSON parsing. No class needs another.
 Every class returns every field of the API response, plus the raw response text as the last element, so the
@@ -23,6 +24,7 @@ APIs Code/
   UserProfileClient.java
   ServiceRequestStatusClient.java
   PaymentLinkClient.java
+  SpeakToRelationshipManagerClient.java
   lib/json-20240303.jar             org.json (same library the SMS sample uses)
   build.cmd / build.sh              compile everything into ./out for CLI testing
   docs/                             this documentation
@@ -51,11 +53,11 @@ mySession.getVariableField(IProjectVariables.API__MEMBER__NAME)
 
 Every setting has a default inside the class (SIT values) and can be overridden **without recompiling**, either with
 a JVM system property or with a static setter called from an OD servlet block. The same property names work for all
-four classes, except the URL which is per class.
+classes, except the URL which is per class.
 
 | Property | Setter | Default | Meaning |
 |---|---|---|---|
-| `dc.validate.url` / `dc.userprofile.url` / `dc.srstatus.url` / `dc.payment.url` | `setApiUrl(String)` | SIT endpoint of each API | Full endpoint URL. |
+| `dc.validate.url` / `dc.userprofile.url` / `dc.srstatus.url` / `dc.payment.url` / `dc.speakrm.url` | `setApiUrl(String)` | SIT endpoint of each API | Full endpoint URL. |
 | `dc.api.apiKey` | `setApiKey(String)` | SIT key | Sent as HTTP header `api-key`. |
 | `dc.api.connectTimeoutMs` | `setConnectTimeoutMs(int)` | `5000` | TCP / TLS connect timeout. |
 | `dc.api.readTimeoutMs` | `setReadTimeoutMs(int)` | `10000` | Wait for the response. |
@@ -80,7 +82,7 @@ ValidateMembershipClient.setLogRetentionDays(7);
 
 Fixed request values that are not configuration (`ProcessName`, the empty licence and profile key fields) are
 constants at the top of each class.
-## Result convention (all four classes)
+## Result convention (all classes)
 
 Every method returns a `String[]`. Elements are never `null`; a missing value is `""`.
 
@@ -128,6 +130,7 @@ e.g.  C:\Tomcat\logs\ValidateMembershipClient\ValidateMembershipClient_2026-09-2
       C:\Tomcat\logs\UserProfileClient\UserProfileClient_2026-09-24.log
       C:\Tomcat\logs\ServiceRequestStatusClient\ServiceRequestStatusClient_2026-09-24.log
       C:\Tomcat\logs\PaymentLinkClient\PaymentLinkClient_2026-09-24.log
+      C:\Tomcat\logs\SpeakToRelationshipManagerClient\SpeakToRelationshipManagerClient_2026-10-06.log
 ```
 
 Every call produces these lines, all with the same 8-character call id (also returned in `IDX_CALL_ID`):
