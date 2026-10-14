@@ -14,3 +14,4 @@ echo "  java -cp out:lib/json-20240303.jar flow.PaymentLinkClient 120804978308 T
 echo "  java -cp out:lib/json-20240303.jar flow.SpeakToRelationshipManagerClient 1298 TESTUSERIT 971506584588 TESTUSERIT"
 echo "  java -cp out:lib/json-20240303.jar flow.CheckActiveServiceRequestsClient 1298 TESTUSERSIT CHECK"
 echo "  java -cp out:lib/json-20240303.jar flow.MultipleActiveSrsClient 1298 TESTUSERSIT EMAIL"
+echo "  java -cp out:lib/json-20240303.jar flow.CaseQueryClient 1298"

@@ -1,6 +1,6 @@
 # Dubai Chamber IVR – Integration API Classes
 
-Seven self-contained Java classes that wrap the Dubai Chamber (DCCI) REST APIs used by the IVR, written in
+Eight self-contained Java classes that wrap the Dubai Chamber (DCCI) REST APIs used by the IVR, written in
 the same style as the ADPF `SmsApiClient` so each one can be dropped into an Avaya Orchestration Designer
 (OD) project on its own and called from a `servletImplementation` block.
 
@@ -13,6 +13,7 @@ the same style as the ADPF `SmsApiClient` so each one can be dropped into an Ava
 | [SpeakToRelationshipManagerClient](SpeakToRelationshipManagerClient.md) | SpeakToARelationshipManager | Register a platinum member's request to speak with their relationship manager |
 | [CheckActiveServiceRequestsClient](CheckActiveServiceRequestsClient.md) | CheckActiveServiceRequests | Whether a member has active SRs, how many, and the SR number when there is one |
 | [MultipleActiveSrsClient](MultipleActiveSrsClient.md) | MultipleActiveSRs | E-mail the member the list of their active SRs |
+| [CaseQueryClient](CaseQueryClient.md) | CaseQuery | Count a member's open cases, within and outside SLA |
 
 Each class is independent: it carries its own URL, key, HTTP code and JSON parsing. No class needs another.
 Every class returns every field of the API response, plus the raw response text as the last element, so the
@@ -29,6 +30,7 @@ APIs Code/
   SpeakToRelationshipManagerClient.java
   CheckActiveServiceRequestsClient.java
   MultipleActiveSrsClient.java
+  CaseQueryClient.java
   lib/json-20240303.jar             org.json (same library the SMS sample uses)
   build.cmd / build.sh              compile everything into ./out for CLI testing
   docs/                             this documentation
@@ -61,7 +63,7 @@ classes, except the URL which is per class.
 
 | Property | Setter | Default | Meaning |
 |---|---|---|---|
-| `dc.validate.url` / `dc.userprofile.url` / `dc.srstatus.url` / `dc.payment.url` / `dc.speakrm.url` / `dc.activesr.url` / `dc.multiplesr.url` | `setApiUrl(String)` | SIT endpoint of each API | Full endpoint URL. |
+| `dc.validate.url` / `dc.userprofile.url` / `dc.srstatus.url` / `dc.payment.url` / `dc.speakrm.url` / `dc.activesr.url` / `dc.multiplesr.url` / `dc.casequery.url` | `setApiUrl(String)` | SIT endpoint of each API | Full endpoint URL. |
 | `dc.api.apiKey` | `setApiKey(String)` | SIT key | Sent as HTTP header `api-key`. |
 | `dc.api.connectTimeoutMs` | `setConnectTimeoutMs(int)` | `5000` | TCP / TLS connect timeout. |
 | `dc.api.readTimeoutMs` | `setReadTimeoutMs(int)` | `10000` | Wait for the response. |
@@ -137,6 +139,7 @@ e.g.  C:\Tomcat\logs\ValidateMembershipClient\ValidateMembershipClient_2026-09-2
       C:\Tomcat\logs\SpeakToRelationshipManagerClient\SpeakToRelationshipManagerClient_2026-10-06.log
       C:\Tomcat\logs\CheckActiveServiceRequestsClient\CheckActiveServiceRequestsClient_2026-10-07.log
       C:\Tomcat\logs\MultipleActiveSrsClient\MultipleActiveSrsClient_2026-10-07.log
+      C:\Tomcat\logs\CaseQueryClient\CaseQueryClient_2026-10-14.log
 ```
 
 Every call produces these lines, all with the same 8-character call id (also returned in `IDX_CALL_ID`):
@@ -216,6 +219,7 @@ Tested live against SIT on 21 Sep 2026 with the CLI:
 | SpeakToRelationshipManagerClient | `1298 TESTUSERIT 971506584588 TESTUSERIT` | SUCCESS on 6 Oct 2026, operation id returned |
 | CheckActiveServiceRequestsClient | `1298 TESTUSERSIT CHECK` | SUCCESS on 7 Oct 2026, hasActiveSr true, 249 active SRs |
 | CheckActiveServiceRequestsClient | `12222298 TESTUSERSIT CHECK` | FAILED, code 1, "Invalid Membership Number" |
+| CaseQueryClient | `1298` | SUCCESS on 14 Oct 2026, counts returned |
 | MultipleActiveSrsClient | `1298 TESTUSERSIT EMAIL` | Compiled and verified against the Postman capture only. Not executed from the CLI, because every call sends an e-mail. |
 | PaymentLinkClient | `120804978308 TESTUSERSIT DubaiPay` | Compiled and verified against the Postman capture only. Not executed from the CLI, because every call creates a transaction and sends an e-mail. |
 
